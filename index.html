@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    color: #39ff14;
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding: 20px 16px 40px;
+  }
+  .scanline {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(57,255,20,0.03) 2px, rgba(57,255,20,0.03) 4px);
+    pointer-events: none;
+    z-index: 10;
+  }
+  .container { max-width: 420px; margin: 0 auto; position: relative; }
+  .header { text-align: center; margin-bottom: 20px; animation: fadeIn 1s ease forwards; }
+  .title {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px; font-weight: 900;
+    letter-spacing: 4px; color: #39ff14;
+    text-transform: uppercase; opacity: 0.6; margin-bottom: 6px;
+  }
+  .subtitle {
+    font-family: 'Orbitron', monospace;
+    font-size: 18px; font-weight: 700; color: #39ff14;
+    text-shadow: 0 0 20px #39ff14, 0 0 40px #39ff1460;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  @keyframes glow {
+    from { text-shadow: 0 0 10px #39ff14, 0 0 20px #39ff1440; }
+    to { text-shadow: 0 0 25px #39ff14, 0 0 50px #39ff1480, 0 0 80px #39ff1430; }
+  }
+  .divider {
+    border: none; border-top: 1px solid #39ff1430; margin: 16px 0; position: relative;
+  }
+  .divider::after {
+    content: '◆'; position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%); background: #000;
+    padding: 0 8px; color: #39ff14; font-size: 10px;
+  }
+  .ascii-container {
+    background: rgba(57,255,20,0.03);
+    border: 1px solid #39ff1430; border-radius: 4px;
+    padding: 10px 4px; margin: 16px 0;
+    overflow-x: auto; animation: fadeIn 1.5s ease forwards;
+  }
+  .ascii-art {
+    font-size: 5.2px;
+    line-height: 1.18;
+    color: #39ff14;
+    text-shadow: 0 0 5px #39ff1480;
+    white-space: pre;
+    display: block;
+    text-align: left;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 0.3px;
+  }
+  .message-box {
+    border: 1px solid #39ff1450; border-radius: 4px;
+    padding: 20px 18px; margin: 20px 0;
+    background: rgba(57,255,20,0.04);
+    animation: fadeIn 2s ease forwards; position: relative;
+  }
+  .message-box::before {
+    content: '> MENSAJE ENTRANTE';
+    position: absolute; top: -10px; left: 12px;
+    background: #000; padding: 0 8px;
+    font-size: 9px; color: #39ff1480; letter-spacing: 2px;
+  }
+  .message-text { font-size: 14px; line-height: 1.8; color: #39ff14; text-shadow: 0 0 8px #39ff1440; }
+  .message-text .highlight {
+    color: #fff; text-shadow: 0 0 10px #39ff14;
+    font-family: 'Orbitron', monospace; font-size: 12px;
+  }
+  .heart-section { text-align: center; margin: 24px 0; animation: heartbeat 1.5s ease-in-out infinite; }
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  .heart { font-size: 32px; display: inline-block; filter: drop-shadow(0 0 12px #39ff14); color: #39ff14; }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; animation: fadeIn 2.5s ease forwards; }
+  .stat-card {
+    border: 1px solid #39ff1430; padding: 12px 10px; border-radius: 4px;
+    text-align: center; background: rgba(57,255,20,0.03);
+  }
+  .stat-label { font-size: 8px; letter-spacing: 2px; color: #39ff1480; text-transform: uppercase; margin-bottom: 6px; display: block; }
+  .stat-value { font-family: 'Orbitron', monospace; font-size: 13px; font-weight: 700; color: #39ff14; text-shadow: 0 0 10px #39ff1460; }
+  .footer { text-align: center; margin-top: 32px; font-size: 9px; color: #39ff1450; letter-spacing: 3px; animation: blink 3s ease-in-out infinite; }
+  @keyframes blink { 0%, 90%, 100% { opacity: 1; } 95% { opacity: 0.2; } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .corner-tl, .corner-tr, .corner-bl, .corner-br { position: absolute; width: 12px; height: 12px; border-color: #39ff14; border-style: solid; opacity: 0.5; }
+  .corner-tl { top: -2px; left: -2px; border-width: 2px 0 0 2px; }
+  .corner-tr { top: -2px; right: -2px; border-width: 2px 2px 0 0; }
+  .corner-bl { bottom: -2px; left: -2px; border-width: 0 0 2px 2px; }
+  .corner-br { bottom: -2px; right: -2px; border-width: 0 2px 2px 0; }
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+<div class="container">
+  <div class="header">
+    <div class="title">// UNSC CARD //</div>
+    <div class="subtitle">MIS DISCULPAS</div>
+    <div style="font-size:9px;color:#39ff1450;letter-spacing:2px;margin-top:6px;">TRANSMISIÓN ENCRIPTADA · NIVEL ALPHA</div>
+  </div>
+  <hr class="divider">
+  <div class="ascii-container">
+    <span class="ascii-art">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⠶⠶⠶⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣶⣿⠁⠀⠀⠀⠀⠀⠀⣨⠟⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣼⣿⣟⣫⣿⣴⣖⣲⣤⣤⣤⠴⣧⣤⡖⢿⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⢾⣛⣩⣽⣿⣿⣍⣩⣉⣀⣈⣉⣉⣻⣿⣯⡉⠉⠙⢿⣝⡳⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣴⡟⢻⣿⣿⣽⡿⠶⠟⠉⠉⠉⠉⠉⠉⢻⣟⣿⣷⡹⡄⠀⠈⢯⡃⢸⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣷⣿⣿⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⣴⡿⣿⣿⣿⡇⢳⡀⠀⠸⣧⡞⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠛⠛⢻⡇⠀⠀⠀⠀⣠⠃⠀⣀⣤⣿⠶⠛⢻⣷⣾⣗⣳⡄⢰⣟⠁⣠⠶⣤⡀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢳⢀⡠⢴⣾⢥⣾⠿⠛⠉⠀⠀⣀⣾⣿⣧⣿⣿⣿⣿⣿⡷⠃⠀⠀⠉⠳⡀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡿⣿⠽⠟⠉⠀⣀⣤⣴⣾⣯⣥⣿⣿⣿⣿⣿⠿⡿⣟⣧⡀⠀⠀⠀⠀⠳⡄⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⡿⠧⡀⠀⠀⣸⣿⣿⣿⣿⣿⣿⡿⠛⠉⠁⢀⣾⣿⡏⠉⠉⠲⣄⡀⠀⠀⠻⡀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣆⠀⠙⡄⠀⢀⣿⣿⣿⣿⣿⡿⣄⢀⣀⣴⠏⢸⠸⡇⠀⠀⠀⠸⡟⢶⡒⠶⢷⡀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢧⣀⣬⣽⣿⣿⣿⡿⠛⠁⣠⡼⣿⣿⣧⢖⣾⠀⣿⠶⠶⠖⠒⠻⠂⣿⣄⠈⣷⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠀⠀⣼⠛⠀⠀⣾⣿⠁⢹⣿⣧⠞⠉⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⠂⠟⡆⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡴⢛⡏⠀⠀⣼⣿⡏⠀⣼⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢳⠈⣿⢹⠃⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠞⠁⢸⠀⠀⣰⠿⣿⠀⠀⣿⣿⣄⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠈⡇⢸⡟⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⠃⠀⠀⠘⠶⢶⣿⣾⣿⠀⠀⢿⣿⣞⣆⢸⡀⠀⣀⣴⣶⣦⡀⠀⠀⣿⣾⠁⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⠃⠀⠀⠀⢀⣤⣸⣿⠁⣿⠀⢀⡾⠃⠉⢻⢿⣇⡴⠟⡟⠛⢻⡇⠀⠀⢿⡯⣧⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡜⣷⠖⢺⠛⣿⣿⣻⠟⠻⣇⠹⣆⣼⠃⠀⠀⢸⡄⢳⠀⠀⢧⠀⠀⢿⠀⠀⣿⢧⣿⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣇⣿⡄⠀⠀⠈⣿⣯⠀⣀⣿⣯⢿⡟⠀⠀⢀⣼⠇⡸⠃⠀⠘⠀⠀⠈⠀⣰⡏⠈⣿⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿⡟⠳⠞⠋⠉⢿⣾⣿⠽⣿⣧⡇⠀⢠⡾⠃⠈⡇⠀⠀⠀⠀⠤⠤⠼⠟⠸⡀⣿⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢹⣿⠵⣿⠶⢤⣀⡀⠉⠚⣉⣉⣠⣷⠀⠀⢳⡀⠀⠹⡆⠀⠀⠀⠀⠀⠀⢠⣾⣭⠟⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⢰⣿⣦⣀⣹⣿⣆⠀⠀⠉⠉⠙⣇⠀⠈⢧⣀⣠⠵⠶⠒⠚⠉⠻⢶⣶⣿⠉⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⢸⣿⣿⡆⠙⢳⡈⠳⢦⣄⠀⠀⠸⣆⠀⣸⠏⠁⠀⣀⡀⢀⡾⠀⢹⣿⣿⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡾⣿⡀⠀⠀⣴⡟⠿⣶⣬⣧⡀⠀⢘⣷⡧⠔⠚⠛⠓⠚⠻⠧⣤⣽⣿⣿⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢳⣿⠀⠀⢹⣿⣆⠀⡿⢻⣿⡿⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢈⣿⠛⢛⣿⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣀⡴⠿⣿⣿⣼⡇⣴⠋⢠⣤⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣋⠀⣴⣿⠇⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⣴⣿⣿⣿⣿⡧⢶⣿⠦⢽⣶⡶⣄⠀⠀⠀⠀⢀⡾⠋⣠⣾⠟⠁⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣾⣿⣿⣿⣿⠋⡠⠋⠀⠀⠀⣽⢷⡞⠀⠀⠀⣠⠿⠶⣾⡿⢿⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣻⣿⠿⠛⢹⣿⠞⠁⠀⠀⠀⣼⢇⣾⡇⠀⡀⢰⠇⢀⣼⡟⠀⠸⡄⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣿⠟⠉⠋⣀⣠⣫⠏⠀⠀⠀⣠⢾⡇⢸⡿⠃⠸⢣⣿⣴⠟⢹⣷⠀⠀⢷⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣴⡟⠁⢀⡴⠟⣽⡿⠁⠀⠀⠀⡴⠁⣸⠃⡼⠀⢀⣰⣿⡉⠀⠀⢸⡼⣦⠀⠘⣇⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⣋⣹⣿⣷⡾⠋⢄⡞⠙⠁⠀⠀⢀⡼⢁⡜⠁⣀⣇⣰⡿⣋⣿⣻⣶⣄⢸⠁⢻⠀⠀⢻⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣰⠾⣱⣿⣿⣿⡿⣃⡆⣰⣾⣧⣌⠉⠀⢀⣾⡵⢋⣴⠊⠉⣻⣟⢮⡭⠉⠹⣿⣿⣿⠄⠄⢧⡀⣸⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⠟⣡⣾⣿⣻⡿⣛⢾⣪⣿⣿⣿⣿⣿⣿⣦⣈⣜⣵⣿⢟⣶⡞⠋⠛⠳⣷⣌⣻⣿⢻⣿⠀⠀⠀⣹⠋⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣿⠟⣡⣶⣿⣯⣽⠏⠁⣨⣿⡿⢻⣿⠈⠛⠮⣿⣿⣿⣿⣾⣵⡿⠋⠀⠀⠀⠀⠀⠙⢿⡿⣾⣿⠀⢀⣼⠃⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⠟⣡⣼⣿⣿⣿⡟⢧⣠⣾⡿⢋⣀⣠⣶⡆⠿⠷⣴⣾⣿⣿⣿⣿⣁⠀⠀⠀⠀⠀⠀⠀⢈⢷⣽⡏⢰⣿⣇⠘⣦⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣠⣾⠟⣡⣾⣿⣿⣿⠟⠁⢰⣶⣿⣿⣏⡘⠋⠉⣩⡀⢠⣾⣿⣿⣿⣿⣿⣿⡏⠐⠦⢄⡀⠀⠀⢀⡆⠀⢻⣧⢸⣿⣿⡙⡿⣆⠀⠀
+⠀⠀⠀⠀⣠⣾⣿⣩⣾⣿⣿⣿⣿⣥⣀⣴⣿⣿⣿⣿⣿⣿⣦⣄⡙⠁⣿⣿⣿⣿⣿⣿⣿⡿⠀⠀⠀⢰⠏⠀⢠⡎⠀⠀⠘⣿⣿⣿⣿⣧⠳⠛⠀⠀
+⠀⠠⣶⣿⣿⣿⣿⣿⣿⣿⣿⠋⠉⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢈⣿⣷⣦⣄⣀⡎⠀⢠⠞⠀⠀⠀⢀⣿⣿⣾⣿⣿⣄⡀⠀⠀
+⠀⢀⣿⣿⡿⣿⢻⣤⣾⡿⣯⠔⣰⣿⣿⢿⣦⣽⣿⠏⠙⠛⠛⠻⣿⣿⣿⣿⣿⣿⣿⠋⢾⣿⣿⣿⡟⠁⢠⠏⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⢿⡀⠀
+⢠⣾⡿⣿⡀⢻⣿⠿⢈⠀⣠⣾⣿⠟⠁⠀⠉⠋⠁⠀⠀⠀⠀⣼⣿⣿⣿⣿⣿⣿⠟⠀⠀⠀⢿⡿⠁⠀⠀⠀⠀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣿⣦⢹⡀
+⠀⠙⠀⠈⣻⣿⡿⣀⣴⣾⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣟⣳⠤⣄⣸⡇⠀⠀⠀⠀⠀⢀⣼⣿⣿⣿⣿⣿⣿⣿⣯⣿⣷⠀
+⠀⠀⠀⠀⣻⠛⠀⠈⣉⢛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⠿⠚⠯⣍⡺⠋⠀⠀⠀⠀⠀⢠⣿⣿⣿⠿⡿⠋⠛⠋⠛⣿⣍⣯⠀</span>
+  </div>
+
+  <div class="message-box">
+    <div class="corner-tl"></div><div class="corner-tr"></div>
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="message-text">
+      Soldado,<br><br>
+      quiero decirte que <span class="highlight">Lo siento mucho</span> por mis malas actitudes
+        y por ser a veces lo que no quieres en tu vida, osea,
+      una persona toxica, y estoy consiente y por eso por medio de esto quiero.<br><br>
+      <span class="highlight">PEDIRTE PERDÓN.</span><br><br>
+      Me equivoqué, y quiero que sepas que te quiero y amo mucho aunque a veces demuestre 
+      lo contrario, no quiero rendirme contigo porque quiero que seamos felices juntos, 
+      yo tampoco me rindo ante ti porque te amo y tu sabes que.<br><br>
+      Te quiero más que a cualquiera, porque no eres solo un hombre, eres
+      <span class="highlight">Mi hombre y el mejpr</span> en el universo. 💚<br><br>
+      ¿Me perdonas y das otra oportunidad para demostrate que soy capaz de cambiar?
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-label">Lo siento</span>
+      <span class="stat-value">∞ %</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Te quiero</span>
+      <span class="stat-value">MAX</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Me arrepiento</span>
+      <span class="stat-value">100%</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Sin ti</span>
+      <span class="stat-value">GAME OVER</span>
+    </div>
+  </div>
+
+  <div class="heart-section">
+    <span class="heart">♥</span>
+  </div>
+
+  <hr class="divider">
+  <div class="footer">FINISH THE FIGHT · FINISH THE FIGHT · FINISH THE FIGHT</div>
+</div>
+</body>
+</html>
